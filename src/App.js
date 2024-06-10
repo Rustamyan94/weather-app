@@ -1,24 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { store } from "./store/store";
+import Home from "./screens/Home";
+import NotFound from "./screens/NotFound";
+import { ToastContainer } from "react-toastify";
+import Header from "./components/Header";
+import { Provider } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
+
+const Layout = () => {
+  return (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+        theme="light"
+        icon={false}
+        style={{ fontSize: "15px" }}
+        progressStyle={{
+          backgroundColor: "#d10000",
+          zIndex: 999999999999999,
+        }}
+      />
+      <Header />
+      <Outlet />
+    </>
+  );
+};
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+
+        {
+          path: "*",
+          element: <NotFound />,
+        },
+      ],
+    },
+  ]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   );
 }
 
