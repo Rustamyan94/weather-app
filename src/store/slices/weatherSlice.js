@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../services/request";
+import { toast } from "react-toastify";
 
 export const fetchCityNameAndWeather = createAsyncThunk(
   "weather/fetchCityNameAndWeather",
@@ -18,6 +19,7 @@ export const fetchCityNameAndWeather = createAsyncThunk(
         throw new Error("API error");
       }
     } catch (error) {
+      toast.warn("Something wrong please try again later");
       console.warn("ERROR in fetchCityNameAndWeather", error);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -32,7 +34,6 @@ export const fetchCurrentWeather = createAsyncThunk(
         `/weather?q=${city}&appid=${process.env.REACT_APP_API_KEY}`
       );
 
-      console.log(result.data);
       if (result.status === 200) {
         return {
           temp: result.data.main.temp,
@@ -43,6 +44,8 @@ export const fetchCurrentWeather = createAsyncThunk(
         throw new Error("API error");
       }
     } catch (error) {
+      setCity("");
+      toast.warn("Something wrong please try again later");
       console.warn("ERROR in fetchCurrentWeather", error);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -57,13 +60,14 @@ export const fetchDailyWeather = createAsyncThunk(
         `/forecast?q=${city}&appid=${process.env.REACT_APP_API_KEY}`
       );
 
-      console.log("result", result.data);
       if (result.status === 200) {
         return result.data.list;
       } else {
         throw new Error("API error");
       }
     } catch (error) {
+      setCity("");
+      toast.warn("Something wrong please try again later");
       console.warn("ERROR in fetchDailyWeather", error);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -86,6 +90,12 @@ const weatherSlice = createSlice({
       return {
         ...store,
         temperatureFormat: action.payload,
+      };
+    },
+    setCity: (store, action) => {
+      return {
+        ...store,
+        city: action.payload,
       };
     },
   },
@@ -124,12 +134,10 @@ const weatherSlice = createSlice({
             name: item.weather[0].main,
           });
         });
-        console.log("weekWeatherData", weekWeatherData);
-
         state.weekWeatherData = weekWeatherData;
       });
   },
 });
 
-export const { setTemperatureFormat } = weatherSlice.actions;
+export const { setTemperatureFormat, setCity } = weatherSlice.actions;
 export default weatherSlice.reducer;

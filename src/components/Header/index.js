@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   fetchCurrentWeather,
   fetchDailyWeather,
+  setCity,
   setTemperatureFormat,
 } from "../../store/slices/weatherSlice";
 
@@ -19,9 +20,12 @@ export default function Header() {
           type="text"
         />
         <button
-          onClick={async () => {
-            await dispatch(fetchCurrentWeather(search));
-            await dispatch(fetchDailyWeather(search));
+          onClick={() => {
+            if (search) {
+              dispatch(setCity(search));
+              dispatch(fetchCurrentWeather(search));
+              dispatch(fetchDailyWeather(search));
+            }
           }}
         >
           Search City

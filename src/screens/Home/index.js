@@ -41,8 +41,9 @@ export default function Home() {
     }
   }, []);
   const day =
-    weekWeatherData?.[showDay]?.find((e) => e.time.startsWith(12)) ||
-    weekWeatherData?.[showDay][0];
+    showDay &&
+    (weekWeatherData?.[showDay]?.find((e) => e.time.startsWith(12)) ||
+      weekWeatherData?.[showDay]?.[0]);
   return (
     <div className={styles.main}>
       <div className={styles.todayBlock}>
